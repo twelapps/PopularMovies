@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_most_popular"
+        android:orderInCategory="1"
+        android:title="@string/most_popular"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_best_rated"
+        android:orderInCategory="1"
+        android:title="@string/best_rated"
+        app:showAsAction="ifRoom"/>
+</menu>

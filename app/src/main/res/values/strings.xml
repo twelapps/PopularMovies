@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="most_popular">Sort most popular</string>
+    <string name="best_rated">Sort best rated</string>
+</resources>
