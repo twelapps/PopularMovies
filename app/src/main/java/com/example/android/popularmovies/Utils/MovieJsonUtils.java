@@ -1,13 +1,11 @@
 package com.example.android.popularmovies.Utils;
 
-import android.content.Context;
-import android.util.Log;
+import android.annotation.SuppressLint;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.Date;
  * Created by twelh on 23/12/2017.
  */
 
+@SuppressWarnings("DefaultFileTemplate")
 public final class MovieJsonUtils {
 
     /**
@@ -75,8 +74,6 @@ public final class MovieJsonUtils {
         final String MOVIE_OVERVIEW = "overview";
         final String MOVIE_RELEASE_DATE = "release_date";
 
-        final String MOVIE_MESSAGE_CODE = "cod";
-
         /* Movie array to hold all movies. */
         ArrayList<Movie> parsedMovieData = new ArrayList<>();
 
@@ -91,8 +88,8 @@ public final class MovieJsonUtils {
             JSONObject movieObj = movieJsonArray.getJSONObject(i);
 
             //Create a new movie instance
-            Movie movie = new Movie(Constants.NO_MOVIE_ID, null, null, null,
-                    0, null);
+            Movie movie = new Movie(
+            );
 
             //Copy parameters from the movie Json object into the just created movie instance.
             if (movieObj.has(MOVIE_ID)) {
@@ -112,7 +109,7 @@ public final class MovieJsonUtils {
             }
             if (movieObj.has(MOVIE_RELEASE_DATE)) { //Get the year only.
                 String dtStart = movieObj.getString(MOVIE_RELEASE_DATE);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 try {
                     Date date = format.parse(dtStart);
                     Calendar cal = Calendar.getInstance();

@@ -1,19 +1,16 @@
 package com.example.android.popularmovies.Activities;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Parcel;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,22 +27,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieClickListener {
 
-    //Local constants and variables
-    final int GRID_COLUMNS = 2;
-    final String MOST_POPULAR = "Most popular movies";
-    final String BEST_RATED = "Best rated movies";
-    RecyclerView mRecyclerView;
-    TextView errorMessageView;
-    String errorMsg;
-    ProgressBar mProgressbar;
-    GridLayoutManager mGridLayoutManager;
-    MovieAdapter mMovieAdapter = null;
-    ImageView ivTemp;
-    Menu optionsMenu; //Save the menu as local variable
-    MovieAdapter.MovieClickListener movieClickListener;
+    private final String MOST_POPULAR = "Most popular movies";
+    private RecyclerView mRecyclerView;
+    private TextView errorMessageView;
+    private String errorMsg;
+    private ProgressBar mProgressbar;
+    private MovieAdapter mMovieAdapter = null;
+    private Menu optionsMenu; //Save the menu as local variable
+    private MovieAdapter.MovieClickListener movieClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         initiateViews();
 
         //Construct the layout manager
-        mGridLayoutManager = new GridLayoutManager(this, GRID_COLUMNS);
+        int GRID_COLUMNS = 2;
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, GRID_COLUMNS);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         //Use this setting to improve performance: changes in content do not
@@ -119,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * }
      *
      */
+    @SuppressLint("StaticFieldLeak")
     public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         @Override
@@ -153,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             ArrayList<Movie> movieListFromBackground = new ArrayList<>();
 
             String sortMethod = params[0];
-            URL TMDBRequestUrl = null;
+            URL TMDBRequestUrl;
 
             //Build the URL string based on the user's selected sorting method
             if (sortMethod.equals(MOST_POPULAR)) {
@@ -174,9 +169,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
                 } catch (FileNotFoundException e) {
                     errorMsg = Constants.ERROR_API_KEY_INVALID;
-                } catch (IOException e) {
-                    errorMsg = Constants.ERROR_WHILE_RETRIEVING_DATA_FROM_TMBD;
-                } catch (JSONException e) {
+                } catch (IOException | JSONException e) {
                     errorMsg = Constants.ERROR_WHILE_RETRIEVING_DATA_FROM_TMBD;
                 }
             } else {
@@ -188,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected void onPostExecute(ArrayList<Movie> movieListFromBackground) {
 
-            if (errorMsg != "") {
+            if (!Objects.equals(errorMsg, "")) {
                 displayErrorMsg(errorMsg);
             } else {
                 //Set loading indicator invisible
@@ -206,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         //Checks whether my Internet connection is available.
         //Works only when ping'ing a real server, not by using ConnectivityManager.getActiveNetworkInfo().
-        public boolean isOnline() throws Exception { //Pass exception to caller
+        public boolean isOnline() { //Pass exception to caller
             Runtime runtime = Runtime.getRuntime();
             try {
                 //IP 8.8.8.8 is a Google DNS which should always be reachable.
@@ -214,8 +207,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 int     exitValue = ipProcess.waitFor();
                 return (exitValue == 0);
             }
-            catch (IOException e)          { /* Error will be thrown in calling method. */ }
-            catch (InterruptedException e) { /* Error will be thrown in calling method. */ }
+            catch (IOException | InterruptedException e)          { /* Error will be thrown in calling method. */ }
 
             return false;
         }
@@ -260,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             optionsMenu.getItem(0).setVisible(true);
 
             //Set the title accordingly
+            String BEST_RATED = "Best rated movies";
             setTitle(BEST_RATED);
 
             //Re-initiate the views.
@@ -283,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * @param message: error message text.
      *
      */
-    public void displayErrorMsg (String message) {
+    private void displayErrorMsg(String message) {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mProgressbar.setVisibility(View.INVISIBLE);
         errorMessageView.setVisibility(View.VISIBLE);
@@ -294,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * This method displays a loading indicator while data is retrieved from TMDB in the background.
      *
      */
-    public void displayLoadingIndicator () {
+    private void displayLoadingIndicator() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mProgressbar.setVisibility(View.VISIBLE);
         errorMessageView.setVisibility(View.INVISIBLE);
@@ -304,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * This method initiates the visibility of the views.
      *
      */
-    public void initiateViews() {
+    private void initiateViews() {
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressbar.setVisibility(View.INVISIBLE);
         errorMessageView.setVisibility(View.INVISIBLE);

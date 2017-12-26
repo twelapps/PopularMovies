@@ -1,13 +1,7 @@
 package com.example.android.popularmovies.Utils;
 
-/**
- * Created by twelh on 20/12/2017.
- */
-
 import android.net.Uri;
 import android.util.Log;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;

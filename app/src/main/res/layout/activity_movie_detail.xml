@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.android.popularmovies.Activities.MovieDetailActivity">
 
     <FrameLayout
@@ -23,9 +23,10 @@
             android:padding="16dp"
             android:text=""
             android:textColor="#FFF"
-            android:textSize="40sp"/>
+            android:textSize="40sp" />
 
     </FrameLayout>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,6 +38,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
+            android:contentDescription="@string/movie_thumbnail"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="h,1:1"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,36 +64,31 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textSize="25sp"
-            android:textColor="#000"
             android:text=""
+            android:textColor="#000"
+            android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_detail_movie_poster"
             app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
 
     </android.support.constraint.ConstraintLayout>
-    <FrameLayout
+
+    <ScrollView
+        android:id="@+id/sv_overview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:padding="16dp">
 
-        <ScrollView
-            android:id="@+id/sv_overview"
+        <TextView
+            android:id="@+id/tv_overview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tv_overview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text=""
-                android:textSize="20sp" />
-        </ScrollView>
-
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="20sp" />
+    </ScrollView>
 
 </LinearLayout>

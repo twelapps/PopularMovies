@@ -4,6 +4,7 @@ package com.example.android.popularmovies.Utils;
  * Created by twelh on 20/12/2017.
  */
 
+@SuppressWarnings("DefaultFileTemplate")
 public final class Constants {
     //The Movie DataBase constants
     public static final String MY_TMDB_API_KEY = "Copy_your_TMDB_API_key_here";

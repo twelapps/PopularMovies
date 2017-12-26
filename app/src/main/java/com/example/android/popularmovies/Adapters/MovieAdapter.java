@@ -18,11 +18,12 @@ import java.util.ArrayList;
  * Created by twelh on 20/12/2017.
  */
 
+@SuppressWarnings("DefaultFileTemplate")
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
     //Local variables
-    ArrayList<Movie> movieList; //Datamodel, passed by the Activity in the constructor or in a separate method when updated
-    final MovieClickListener mMovieClickListener; //Local instance of the interface.
+    private ArrayList<Movie> movieList; //Datamodel, passed by the Activity in the constructor or in a separate method when updated
+    private final MovieClickListener mMovieClickListener; //Local instance of the interface.
 
     //Constructor
     public MovieAdapter(MovieClickListener movieClickListener, ArrayList<Movie> movieList) {
@@ -37,7 +38,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                         implements View.OnClickListener {
 
         //Local variable
-        private ImageView mMoviePosterImageView;
+        private final ImageView mMoviePosterImageView;
 
         //Constructor
         public MovieAdapterViewHolder(View view) {
@@ -59,9 +60,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             mMovieClickListener.onMovieClick(clickedPosition, movie);
         }
     }
-    /**********************************************
-     *End of "Create the inner ViewHolder class"
-     **********************************************/
 
     /**
      * "MovieAdapterViewHolder onCreateViewHolder" gets called when each new ViewHolder is created.
@@ -82,7 +80,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForGridItem, parent, shouldAttachToParentImmediately);
+        @SuppressWarnings("ConstantConditions") View view = inflater.inflate(layoutIdForGridItem, parent, shouldAttachToParentImmediately);
         return new MovieAdapterViewHolder(view);
     }
 
@@ -132,6 +130,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * The interface that receives onClick messages.
      */
     public interface MovieClickListener {
-        void onMovieClick(int clickedMovieIndex, Movie movie);
+        void onMovieClick(@SuppressWarnings("unused") int clickedMovieIndex, Movie movie);
     }
 }

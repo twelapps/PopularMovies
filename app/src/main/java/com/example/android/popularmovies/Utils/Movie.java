@@ -1,17 +1,17 @@
 package com.example.android.popularmovies.Utils;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageView;
 
 /**
  * Created by twelh on 20/12/2017.
  */
 
+@SuppressWarnings({"ALL", "DefaultFileTemplate"})
 public class Movie implements Parcelable {
 
     //Mandatory CREATOR static for a parcelable object.
+    @SuppressWarnings("unused")
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
@@ -22,21 +22,21 @@ public class Movie implements Parcelable {
     };
 
     //Properties
-    public int id;
-    public String title;
-    public String posterViewPath;
-    public String overview;
-    public double voteAverage;
-    public String releaseDate;
+    private int id;
+    private String title;
+    private String posterViewPath;
+    private String overview;
+    private double voteAverage;
+    private String releaseDate;
 
     //Constructor
-    public Movie(int id, String title, String posterViewPath, /*ImageView posterView,*/ String overview, double voteAverage, String releaseDate) {
-        this.id = id;
-        this.title = title;
-        this.posterViewPath = posterViewPath;
-        this.overview = overview;
-        this.voteAverage = voteAverage;
-        this.releaseDate = releaseDate;
+    public Movie(/*ImageView posterView,*/) {
+        this.id = Constants.NO_MOVIE_ID;
+        this.title = null;
+        this.posterViewPath = null;
+        this.overview = null;
+        this.voteAverage = (double) 0;
+        this.releaseDate = null;
     }
 
     public int getId() {
@@ -100,7 +100,7 @@ public class Movie implements Parcelable {
     }
 
     //Parcelling part
-    public Movie (Parcel in) {
+    private Movie(Parcel in) {
         this.id = in.readInt();
         this.title = in.readString();
         this.posterViewPath = in.readString();

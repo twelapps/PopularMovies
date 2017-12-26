@@ -3,9 +3,7 @@ package com.example.android.popularmovies.Activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
@@ -15,24 +13,17 @@ import com.squareup.picasso.Picasso;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    //Local variables.
-    ImageView moviePosterView;
-    TextView tvDetailTitle;
-    TextView tvVoteAverage;
-    TextView tvReleaseDate;
-    TextView tvOverview;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
         //Connect to the UI elements.
-        moviePosterView = findViewById(R.id.iv_detail_movie_poster);
-        tvDetailTitle = findViewById(R.id.tv_detail_title);
-        tvVoteAverage = findViewById(R.id.tv_vote_average);
-        tvReleaseDate = findViewById(R.id.tv_release_date);
-        tvOverview = findViewById(R.id.tv_overview);
+        ImageView moviePosterView = findViewById(R.id.iv_detail_movie_poster);
+        TextView tvDetailTitle = findViewById(R.id.tv_detail_title);
+        TextView tvVoteAverage = findViewById(R.id.tv_vote_average);
+        TextView tvReleaseDate = findViewById(R.id.tv_release_date);
+        TextView tvOverview = findViewById(R.id.tv_overview);
 
         //Get the passed data from the Intent
         Intent intent = getIntent();
