@@ -33,6 +33,15 @@
             android:parentActivityName=".Activities.MainActivity"
             tools:ignore="InnerclassSeparator">
         </activity>
+
+        <!-- Register MovieProvider in the manifest with the correct authorities -->
+        <!-- Our ContentProvider -->
+        <provider
+            android:name=".Data.MovieProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false">
+        </provider>
+
     </application>
 
 </manifest>

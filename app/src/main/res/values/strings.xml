@@ -1,6 +1,14 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">PopularMovies</string>
-    <string name="most_popular">Sort most popular</string>
-    <string name="best_rated">Sort best rated</string>
+
+    <string name="most_popular" tools:keep="@string/most_popular">Sort most popular</string>
+    <string name="show_favorites" tools:keep="@string/show_favorites">Show favorites</string>
+    <string name="refresh" tools:keep="@string/refresh">Refresh</string>
+
     <string name="movie_thumbnail">Movie thumbnail</string>
+    <string name="content_authority">com.example.android.popularmovies</string>
+
+    <string name="favorize">Mark as\nfavorite</string>
+    <string name="unfavorize">Unmark as\nfavorite</string>
+    <string name="movie_trailer_play_symbol">Movie trailer play symbol</string>
 </resources>

@@ -16,10 +16,26 @@ import java.util.Scanner;
 public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
+
+    //Checks whether my Internet connection is available.
+    //Works only when ping'ing a real server, not by using ConnectivityManager.getActiveNetworkInfo().
+    public static boolean isOnline() { //Pass exception to caller
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            //IP 8.8.8.8 is a Google DNS which should always be reachable.
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException | InterruptedException e)          { /* Error will be thrown in calling method. */ }
+
+        return false;
+    }
+
     /**
      * Builds the URL used to talk to TMDB.
      *
-     * @return The URL to use to query the weather server.
+     * @return The URL to use to query the TMDB server.
      */
     public static URL buildUrl(String requestUrl) {
         Uri builtUri = Uri.parse(requestUrl).buildUpon()

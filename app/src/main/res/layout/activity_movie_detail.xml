@@ -5,19 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/detail_main_layout"
     tools:context="com.example.android.popularmovies.Activities.MovieDetailActivity">
-
+<!-- Layout_weight only works if (in this case) you set the height to 0dp. -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="0dp"
+        android:layout_weight="3">
 
         <TextView
-            android:id="@+id/tv_detail_title"
+            android:id="@+id/detail_tv_detail_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             android:background="#A4C639"
             android:gravity="center_horizontal|center_vertical"
             android:padding="16dp"
@@ -29,11 +30,11 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="0dp"
+        android:layout_weight="4">
 
         <ImageView
-            android:id="@+id/iv_detail_movie_poster"
+            android:id="@+id/detail_iv_detail_movie_poster"
             android:layout_width="185dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
@@ -46,18 +47,39 @@
             app:srcCompat="@mipmap/ic_launcher" />
 
         <TextView
-            android:id="@+id/tv_release_date"
+            android:id="@+id/detail_tv_release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
             android:text=""
-            android:textSize="40sp"
-            app:layout_constraintStart_toEndOf="@+id/iv_detail_movie_poster"
+            android:textSize="35sp"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_vote_average"
+            android:id="@+id/detail_tv_runtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text=""
+            android:textSize="25sp"
+            android:textStyle="italic|bold"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/detail_tv_release_date" />
+
+        <ProgressBar
+            android:id="@+id/detail_pb_runtime_loading_indicator"
+            android:layout_height="21dp"
+            android:layout_width="21dp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/detail_tv_release_date" />
+
+        <TextView
+            android:id="@+id/detail_tv_vote_average"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -66,29 +88,90 @@
             android:layout_marginTop="8dp"
             android:text=""
             android:textColor="#000"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_detail_movie_poster"
-            app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/detail_tv_runtime" />
+
+        <Button
+            android:id="@+id/detail_bt_fav_or_unfav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:drawable/editbox_dropdown_light_frame"
+            android:text="@string/favorize"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
+
+        <ProgressBar
+            android:id="@+id/detail_pb_fav_or_unfav_loading_indicator"
+            android:layout_height="21dp"
+            android:layout_width="21dp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
 
     </android.support.constraint.ConstraintLayout>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"/>
+
     <ScrollView
-        android:id="@+id/sv_overview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tv_overview"
+            android:id="@+id/detail_tv_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </ScrollView>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/detail_rv_trailers"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+        <TextView
+            android:id="@+id/detail_tv_error_message_display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_gravity="bottom"
+            android:background="#F00"
+            android:textColor="#FFF"
+            android:text=""
+            android:textSize="18sp"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/detail_pb_trailers_loading_indicator"
+            android:layout_height="42dp"
+            android:layout_width="42dp"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+
+    </FrameLayout>
 
 </LinearLayout>
