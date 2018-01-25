@@ -7,7 +7,7 @@ package com.example.android.popularmovies.Utils;
 @SuppressWarnings("DefaultFileTemplate")
 public final class Constants {
     //The Movie DataBase constants
-    private static final String MY_TMDB_API_KEY = "3c534dc71a2f9d28e9594e5773abcc93";
+    private static final String MY_TMDB_API_KEY = "YOUR_TMDB_API_KEY_HERE";
     private static final String TMDB_BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String TMDB_URL_TRAILERS_EXTENSION = "/videos";
     private static final String URL_PARM_SEPARATOR = "?";
