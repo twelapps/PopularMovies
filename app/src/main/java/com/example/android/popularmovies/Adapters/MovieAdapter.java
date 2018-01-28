@@ -1,18 +1,19 @@
 package com.example.android.popularmovies.Adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.popularmovies.Data.MovieContract.MovieEntry;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Utils.Constants;
 import com.example.android.popularmovies.Utils.Movie;
+import com.example.android.popularmovies.Utils.MovieJsonUtils;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * Created by twelh on 20/12/2017.
@@ -22,12 +23,12 @@ import java.util.ArrayList;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
     //Local variables
-    private ArrayList<Movie> movieList; //Datamodel, passed by the Activity in the constructor or in a separate method when updated
     private final MovieClickListener mMovieClickListener; //Local instance of the interface.
+    private Cursor mCursor;
 
     //Constructor
-    public MovieAdapter(MovieClickListener movieClickListener, ArrayList<Movie> movieList) {
-        this.movieList = movieList;
+    public MovieAdapter(MovieClickListener movieClickListener, Cursor cursor) {
+        this.mCursor = cursor;
         this.mMovieClickListener = movieClickListener;
     }
 
@@ -56,8 +57,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            Movie movie = movieList.get(clickedPosition);
-            mMovieClickListener.onMovieClick(clickedPosition, movie);
+
+            //Build a Movie instance out of the data found at the cursor's position
+            mCursor.moveToPosition(clickedPosition);
+            Movie movie = MovieJsonUtils.getMovieFromCursorAtPosition(mCursor);
+
+            //And pass it to the click listener interface
+            mMovieClickListener.onMovieClick(movie);
         }
     }
 
@@ -98,8 +104,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void onBindViewHolder(MovieAdapter.MovieAdapterViewHolder holder, int position) {
 
         Context context = holder.mMoviePosterImageView.getContext();
+        mCursor.moveToPosition(position);
         String url = Constants.TMDB_BASE_URL_IMAGES + Constants.TMDB_IMAGE__SIZE +
-                movieList.get(position).getPosterViewPath();
+                mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_PATH));
         Picasso.with(context).load(url).into(holder.mMoviePosterImageView);
     }
 
@@ -111,25 +118,31 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public int getItemCount() {
-        if (movieList == null) {return 0;}
-        return movieList.size();
+        if (mCursor == null) {return 0;}
+        return mCursor.getCount();
     }
 
-    /**
-     * This method handles the updated datamodel: the local copy of the datamodel is also updated
-     * and the view is refreshed.
-     *
-     * @param updatedMovieList  Reflects the updated datamodel
-     */
-    public void setMovieData(ArrayList<Movie> updatedMovieList) {
-        this.movieList = updatedMovieList;
+    public void setMovieData(Cursor cursor) {
+        this.mCursor = cursor;
         notifyDataSetChanged();
     }
+
+    public void swapCursor(Cursor newCursor) {
+
+        if (mCursor != null) mCursor.close();
+
+        mCursor = newCursor;
+        if (newCursor != null) {
+            // Force the RecyclerView to refresh
+            this.notifyDataSetChanged();
+        }
+    }
+
 
     /**
      * The interface that receives onClick messages.
      */
     public interface MovieClickListener {
-        void onMovieClick(@SuppressWarnings("unused") int clickedMovieIndex, Movie movie);
+        void onMovieClick(Movie movie);
     }
 }
