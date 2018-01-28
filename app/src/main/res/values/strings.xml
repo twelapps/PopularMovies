@@ -8,7 +8,8 @@
     <string name="movie_thumbnail">Movie thumbnail</string>
     <string name="content_authority">com.example.android.popularmovies</string>
 
-    <string name="favorize">Mark as\nfavorite</string>
-    <string name="unfavorize">Unmark as\nfavorite</string>
-    <string name="movie_trailer_play_symbol">Movie trailer play symbol</string>
+    <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
+    <string name="read_reviews">Reviews</string>
+    <string name="movie_trailer_play_symbol">Movie trailer\nplay symbol</string>
 </resources>

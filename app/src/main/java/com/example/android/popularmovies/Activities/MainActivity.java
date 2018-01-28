@@ -333,9 +333,9 @@ public class MainActivity extends AppCompatActivity
 
             //Build the URL string based on the user's selected sorting method
             if (sortMethod.equals(MOST_POPULAR)) {
-                TMDBRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_BASE_URL_MOST_POPULAR);
+                TMDBRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_BASE_URL_MOST_POPULAR(1));
             } else {
-                TMDBRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_BASE_URL_TOP_RATED);
+                TMDBRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_BASE_URL_TOP_RATED(1));
             }
 
             //Obtain a Jsonstring from the response, and parse it into a movielist.

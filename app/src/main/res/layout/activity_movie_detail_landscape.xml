@@ -125,17 +125,28 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/detail_tv_runtime" />
 
-                    <Button
+                    <!--<Button-->
+                        <!--android:id="@+id/detail_bt_fav_or_unfav"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="8dp"-->
+                        <!--android:layout_marginStart="8dp"-->
+                        <!--android:background="@android:drawable/editbox_dropdown_light_frame"-->
+                        <!--android:text="@string/favorize"-->
+                        <!--android:textSize="12sp"-->
+                        <!--app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average"-->
+                        <!--app:layout_constraintStart_toStartOf="parent" />-->
+                    <ImageButton
                         android:id="@+id/detail_bt_fav_or_unfav"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:layout_marginStart="8dp"
-                        android:background="@android:drawable/editbox_dropdown_light_frame"
-                        android:text="@string/favorize"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/unfavorite"
+                        android:text=""
                         android:textSize="12sp"
-                        app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
 
                     <ProgressBar
                         android:id="@+id/detail_pb_fav_or_unfav_loading_indicator"
@@ -145,6 +156,20 @@
                         android:visibility="invisible"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
+
+                    <ImageButton
+                        android:id="@+id/detail_bt_read_reviews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/read_reviews"
+                        android:textColor="@color/colorRed"
+                        android:textStyle="bold"
+                        android:text=""
+                        app:layout_constraintStart_toEndOf="@+id/detail_bt_fav_or_unfav"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average"
+                        app:layout_constraintEnd_toEndOf="parent" />
                 </android.support.constraint.ConstraintLayout>
             </RelativeLayout>
 
@@ -169,8 +194,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:visibility="visible"/>
+
                 </ScrollView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/detail_rv_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible" />
+                <ProgressBar
+                    android:id="@+id/detail_pb_reviews_loading_indicator"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible" />
             </RelativeLayout>
         </LinearLayout>
     </FrameLayout>

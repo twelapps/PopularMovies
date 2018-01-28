@@ -1,5 +1,7 @@
 package com.example.android.popularmovies.Activities;
 
+import android.annotation.SuppressLint;
+import android.app.FragmentManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,17 +20,21 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.android.popularmovies.Adapters.MovieReviewAdapter;
 import com.example.android.popularmovies.Adapters.MovieTrailerAdapter;
 import com.example.android.popularmovies.Data.MovieContract;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Utils.Constants;
 import com.example.android.popularmovies.Utils.Movie;
 import com.example.android.popularmovies.Utils.MovieJsonUtils;
+import com.example.android.popularmovies.Utils.MovieReview;
 import com.example.android.popularmovies.Utils.NetworkUtils;
 import com.google.android.youtube.player.YouTubeIntents;
 import com.squareup.picasso.Picasso;
@@ -50,19 +56,24 @@ public class MovieDetailActivity extends AppCompatActivity
     private TextView tvVoteAverage;
     private TextView tvReleaseDate;
     private TextView tvOverview;
-    private Button btFavOrUnfav;
+    private ImageButton btFavOrUnfav;
     private ProgressBar pbFavOrUnfavLoadingIndicator;
+    private ImageButton btShowReviews;
     private TextView tvRuntime;
     private ProgressBar pbRuntimeLoadingIndicator;
     private TextView tvErrorMessage;
     private RecyclerView rvTrailers;
     private ProgressBar pbTrailersLoadingIndicator;
+    private RecyclerView rvReviews;
+    private ProgressBar pbReviewsLoadingIndicator;
 
     private String errorMsg = "";
 
     private MovieTrailerAdapter mAdapter;
 
     private Movie movie;
+
+    private ArrayList<MovieReview> savedMovieReviewList = new ArrayList<MovieReview>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +93,7 @@ public class MovieDetailActivity extends AppCompatActivity
         tvReleaseDate = findViewById(R.id.detail_tv_release_date);
         tvOverview = findViewById(R.id.detail_tv_overview);
         pbFavOrUnfavLoadingIndicator = findViewById(R.id.detail_pb_fav_or_unfav_loading_indicator);
+        btShowReviews = findViewById(R.id.detail_bt_read_reviews);
         tvRuntime = findViewById(R.id.detail_tv_runtime);
         pbRuntimeLoadingIndicator = findViewById(R.id.detail_pb_runtime_loading_indicator);
         tvErrorMessage = findViewById(R.id.detail_tv_error_message_display);
@@ -89,6 +101,9 @@ public class MovieDetailActivity extends AppCompatActivity
         rvTrailers = findViewById(R.id.detail_rv_trailers);
         pbTrailersLoadingIndicator = findViewById(R.id.detail_pb_trailers_loading_indicator);
         btFavOrUnfav = findViewById(R.id.detail_bt_fav_or_unfav);
+        rvReviews = findViewById(R.id.detail_rv_reviews);
+        pbReviewsLoadingIndicator = findViewById(R.id.detail_pb_reviews_loading_indicator);
+
 
         //Define an onClick listener for the favorize/unfavorize button.
         btFavOrUnfav.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +114,7 @@ public class MovieDetailActivity extends AppCompatActivity
                 // Following code executes on the main thread after user presses button.
                 // We are performing short database operations. In order not to make the code
                 // too complicated this will be done on the main thread as well.
-                if (btFavOrUnfav.getText().toString().equals(getString(R.string.favorize))) {
+                if (btFavOrUnfav.getTag().equals(R.string.unfavorite)) {
 
                     //This movie is not yet favorized.
                     //Store the favorized movie information in the database.
@@ -110,8 +125,8 @@ public class MovieDetailActivity extends AppCompatActivity
                     //If record successfully inserted, change the button text to indicate to unfavorize the movie,
                     //and change the button color.
                     if (! (uri == null) ) {
-                        btFavOrUnfav.setText(R.string.unfavorize);
-                        btFavOrUnfav.setBackgroundColor(getColor(R.color.colorUnfavorize));
+                        btFavOrUnfav.setImageResource(R.drawable.favorite);
+                        btFavOrUnfav.setTag(R.string.favorite);
                     }
                 } else {
                     //Delete the unfavorized movie information from the favorite movies table.
@@ -125,14 +140,30 @@ public class MovieDetailActivity extends AppCompatActivity
                     //If record successfully deleted, change the button text to indicate to favorize the movie,
                     //and change the button color.
                     if (nrRowsDeleted > 0) {
-                        btFavOrUnfav.setText(R.string.favorize);
-                        btFavOrUnfav.setBackgroundColor(getColor(R.color.colorFavorize));
+                        btFavOrUnfav.setImageResource(R.drawable.unfavorite);
+                        btFavOrUnfav.setTag(R.string.unfavorite);
                     }
                 }
             }
         });
+        //Define an onClick listener for the "show reviews" button.
+        btShowReviews.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
-        //Construct the layout manager depending on the device orientation
+                tvErrorMessage.setVisibility(View.INVISIBLE); //Reset to invisible
+
+                //Get reviews from TMDB, or if already done from local storage.
+                if ( (savedMovieReviewList.size() == 0) ||
+                        (savedMovieReviewList.size() == 2 && savedMovieReviewList.get(1).getReview().equals(Constants.NO_REVIEWS_FOUND)) ) {
+                    new FetchReviewsTask().execute(movie.getTmdbId());
+                } else {
+                    handleReviewVisibility();
+                }
+            }
+        });
+
+
+        //Construct the layout manager for trailers  depending on the device orientation
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
             rvTrailers.setLayoutManager(mLinearLayoutManager);
@@ -140,6 +171,10 @@ public class MovieDetailActivity extends AppCompatActivity
             GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 3);
             rvTrailers.setLayoutManager(mGridLayoutManager);
         }
+
+        //Construct the layout manager for reviews
+        LinearLayoutManager reviewsLinearLayoutManager = new LinearLayoutManager(this);
+        rvReviews.setLayoutManager(reviewsLinearLayoutManager);
 
         //Use this setting to improve performance: changes in content do not
         //change the child layout size in the RecyclerView
@@ -186,11 +221,11 @@ public class MovieDetailActivity extends AppCompatActivity
                 null);
 
         if (cursor != null && cursor.getCount() == 0 /* Movie not found in the favorite movies db, so not favorite */) {
-            btFavOrUnfav.setText(R.string.favorize);
-            btFavOrUnfav.setBackgroundColor(getColor(R.color.colorFavorize));
+            btFavOrUnfav.setImageResource(R.drawable.unfavorite);
+            btFavOrUnfav.setTag(R.string.unfavorite);
         } else {
-            btFavOrUnfav.setText(R.string.unfavorize);
-            btFavOrUnfav.setBackgroundColor(getColor(R.color.colorUnfavorize));
+            btFavOrUnfav.setImageResource(R.drawable.favorite);
+            btFavOrUnfav.setTag(R.string.favorite);
         }
 
         //Fetch trailer info
@@ -211,6 +246,19 @@ public class MovieDetailActivity extends AppCompatActivity
         mLinearLayout.setOnTouchListener(new OnSwipeTouchListener(MovieDetailActivity.this) {
             public void onSwipeRight() {
                 finish();
+            }
+
+            public void onSwipeLeft() {
+                //Make reviews invisible
+                moviePosterView.setVisibility(View.VISIBLE);
+                tvReleaseDate.setVisibility(View.VISIBLE);
+                tvRuntime.setVisibility(View.VISIBLE);
+                tvVoteAverage.setVisibility(View.VISIBLE);
+                btFavOrUnfav.setVisibility(View.VISIBLE);
+                btShowReviews.setVisibility(View.VISIBLE);
+                btShowReviews.setVisibility(View.VISIBLE);
+                tvOverview.setVisibility(View.VISIBLE);
+                rvReviews.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -286,7 +334,7 @@ public class MovieDetailActivity extends AppCompatActivity
             int runtime = 0;
 
             //Build the URL string based on the TMDB movie ID
-            URL TMDBRuntimeRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_RUNTIME_URL(movieTmdbId));
+            URL TMDBRuntimeRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_RUNTIME_URL(movieTmdbId, 1));
 
             //Obtain a Jsonstring from the response, and parse it into a movielist.
             if (TMDBRuntimeRequestUrl != null) {
@@ -566,6 +614,121 @@ public class MovieDetailActivity extends AppCompatActivity
         }
     }
 
+    //Helper class to prevent duplicate code
+    private void handleReviewVisibility() {
+        //Make some fields invisible, and make loading indicator visible, depending on device orientation.
+        rvReviews.setVisibility(View.VISIBLE);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            moviePosterView.setVisibility(View.INVISIBLE);
+            tvReleaseDate.setVisibility(View.INVISIBLE);
+            tvRuntime.setVisibility(View.INVISIBLE);
+            tvVoteAverage.setVisibility(View.INVISIBLE);
+            btFavOrUnfav.setVisibility(View.INVISIBLE);
+            btShowReviews.setVisibility(View.INVISIBLE);
+        } else {
+            tvOverview.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * This inner class fetches the movie reviews from TMDB
+     * on an a-synchronous background thread.
+     */
+    public class FetchReviewsTask extends AsyncTask<Integer, Void, ArrayList<MovieReview>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            handleReviewVisibility();
+        }
+
+        @Override
+        protected ArrayList<MovieReview> doInBackground(Integer... params) {
+
+            //Check whether network active.
+            try {
+                if (!NetworkUtils.isOnline()) {
+
+                    //Set error message
+                    errorMsg = Constants.ERROR_NO_INTERNET_NO_REVIEWS;
+
+                    return null;
+                }
+            } catch (Exception e) {
+
+                //Set error message
+                errorMsg = Constants.ERROR_NO_INTERNET_NO_REVIEWS;
+
+                return null;
+            }
+
+            //Get the TMBD movie ID
+            int movieId = params[0];
+
+            //Initiate the output
+            ArrayList<MovieReview> reviewsList = new ArrayList<>();
+
+            //Build the URL string based on the TMDB movie ID
+            URL TMDBMovieReviewsRequestUrl = NetworkUtils.buildUrl(Constants.TMDB_REVIEWS_URL(movieId, 1));
+
+            //Obtain a Jsonstring from the response, and parse it into a movielist.
+            if (TMDBMovieReviewsRequestUrl != null) {
+
+                try {
+                    String jsonMovieReviewsResponse = NetworkUtils
+                            .getResponseFromHttpUrl(TMDBMovieReviewsRequestUrl);
+
+                    reviewsList = MovieJsonUtils
+                            .getMovieReviewsListFromJson(jsonMovieReviewsResponse);
+                } catch (FileNotFoundException e) {
+                    errorMsg = Constants.ERROR_API_KEY_INVALID;
+                } catch (IOException | JSONException e) {
+                    errorMsg = Constants.ERROR_WHILE_RETRIEVING_DATA_FROM_TMBD;
+                }
+            } else {
+                errorMsg = Constants.ERROR_WHILE_RETRIEVING_DATA_FROM_TMBD;
+            }
+            //Save for possible later use
+            savedMovieReviewList = reviewsList;
+
+            return reviewsList;
+        }
+
+        @SuppressLint("ResourceAsColor")
+        @Override
+        protected void onPostExecute(ArrayList<MovieReview> movieReviewsList) {
+
+            ArrayList<MovieReview> mRList = new ArrayList<>();
+
+            //Make trailers RecyclerView visible, and make loading indicator invisible
+            rvReviews.setBackgroundColor(Color.CYAN);
+            rvReviews.setVisibility(View.VISIBLE);
+            pbReviewsLoadingIndicator.setVisibility(View.INVISIBLE);
+
+            MovieReview noReviewsFound = new MovieReview("", Constants.NO_REVIEWS_FOUND);
+            MovieReview movieHasNoReviews = new MovieReview("", Constants.MOVIE_HAS_NO_REVIEWS);
+            MovieReview swipeLeftToReturn = new MovieReview("", Constants.SWIPE_LEFT_TO_RETURN);
+            if (! errorMsg.isEmpty()) {
+                //Reset error msg, we will handle it here.
+                errorMsg = "";
+
+                //Give a message to the user.
+                rvReviews.setBackgroundColor(Color.RED);
+                mRList.add(noReviewsFound);
+            } else if (movieReviewsList.size() == 0) {
+                mRList.add(movieHasNoReviews);
+            } else {
+                mRList = movieReviewsList;
+            }
+            mRList.add(0, swipeLeftToReturn);
+
+            //Populate the recyclerview
+            MovieReviewAdapter movieReviewAdapter = new MovieReviewAdapter(mRList);
+            rvReviews.setAdapter(movieReviewAdapter);
+        }
+    }
+
     //Inner class to handle swipes.
     public class OnSwipeTouchListener implements View.OnTouchListener {
 
@@ -632,5 +795,25 @@ public class MovieDetailActivity extends AppCompatActivity
 
         public void onSwipeBottom() {
         }
+    }
+
+    /**
+     * This method will make an error message visible and hide the movie
+     * View and the loading indicator.
+     * <p>
+     * Since it is okay to redundantly set the visibility of a View, we don't
+     * need to check whether each view is currently visible or invisible.
+     *
+     * @param message: error message text.
+     *
+     */
+    private void displayErrorMsg(String message) {
+
+        if (message.equals(Constants.ERROR_NO_INTERNET_NO_REVIEWS)) {
+
+            //Do not bother the user with a red error field when he just can't retrieve reviews.
+            Toast.makeText(MovieDetailActivity.this, message, Toast.LENGTH_LONG).show();
+        }
+        this.errorMsg = "";
     }
 }

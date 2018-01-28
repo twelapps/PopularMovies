@@ -187,6 +187,43 @@ public final class MovieJsonUtils {
         return parsedMovieTrailerIds;
     }
 
+    //Retrieves the movie's reviews from the input JSON string.
+    public static ArrayList<MovieReview> getMovieReviewsListFromJson(String movieReviewsJsonString)
+            throws JSONException {
+
+        final String MOVIE_REVIEW_AUTHOR_KEY = "author";
+        final String MOVIE_REVIEW_KEY = "content";
+
+        /* Holds a Json array of movie trailers. */
+        final String MOVIE_REVIEWS_RESULTS = "results";
+
+        /* String array to hold all trailer IDs. */
+        ArrayList<MovieReview> parsedMovieReviewList = new ArrayList<>();
+
+        // Build a JSONObject out of the input JSONString.
+        JSONObject movieReviewsJsonObj = new JSONObject(movieReviewsJsonString);
+
+        // Get the movie reviews part of the server response and copy it into a local variable.
+        JSONArray movieReviewsJsonArray = movieReviewsJsonObj.getJSONArray(MOVIE_REVIEWS_RESULTS);
+
+        // Walk over the movie trailers Json array and copy all data into a local movie trailers array.
+        for (int i = 0; i < movieReviewsJsonArray.length(); i++) {
+            JSONObject movieReviewObject = movieReviewsJsonArray.getJSONObject(i);
+
+            MovieReview movieReview = new MovieReview("", "");
+            //Copy the review author to the MovieReview instance.
+            if (movieReviewObject.has(MOVIE_REVIEW_AUTHOR_KEY)) {
+                movieReview.setAuthor(movieReviewObject.getString(MOVIE_REVIEW_AUTHOR_KEY));
+            }
+            if (movieReviewObject.has(MOVIE_REVIEW_KEY)) {
+                movieReview.setReview(movieReviewObject.getString(MOVIE_REVIEW_KEY));
+            }
+            parsedMovieReviewList.add(movieReview);
+        }
+
+        return parsedMovieReviewList;
+    }
+
 
     // Build an array of ContentValues from an input arrayList, as input for ContentProvider DB BulkInsert
     public static ContentValues[] getMovieContentValues (ArrayList<Movie> movieList) {

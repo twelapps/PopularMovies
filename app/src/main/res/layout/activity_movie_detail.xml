@@ -2,12 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/detail_main_layout"
     tools:context="com.example.android.popularmovies.Activities.MovieDetailActivity">
-<!-- Layout_weight only works if (in this case) you set the height to 0dp. -->
+
+
+    <!-- Layout_weight only works if (in this case) you set the height to 0dp. -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -38,6 +40,7 @@
             android:layout_width="185dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:contentDescription="@string/movie_thumbnail"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,8 +74,8 @@
 
         <ProgressBar
             android:id="@+id/detail_pb_runtime_loading_indicator"
-            android:layout_height="21dp"
             android:layout_width="21dp"
+            android:layout_height="21dp"
             android:layout_gravity="center"
             android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
@@ -93,33 +96,71 @@
             app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
             app:layout_constraintTop_toBottomOf="@+id/detail_tv_runtime" />
 
-        <Button
+        <ImageButton
             android:id="@+id/detail_bt_fav_or_unfav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@android:drawable/editbox_dropdown_light_frame"
-            android:text="@string/favorize"
+            android:background="@drawable/unfavorite"
+            android:text=""
+            android:textColor="@color/colorWhite"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
             app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
+        <!--android:background="@android:drawable/editbox_dropdown_light_frame"-->
 
         <ProgressBar
             android:id="@+id/detail_pb_fav_or_unfav_loading_indicator"
-            android:layout_height="21dp"
             android:layout_width="21dp"
+            android:layout_height="21dp"
             android:layout_gravity="center"
             android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
             app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
+
+        <ImageButton
+            android:id="@+id/detail_bt_read_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/read_reviews"
+            android:text=""
+            android:textColor="@color/colorRed"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/detail_bt_fav_or_unfav"
+            app:layout_constraintTop_toBottomOf="@+id/detail_tv_vote_average" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/detail_rv_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            android:visibility="invisible" />
+        <ProgressBar
+            android:id="@+id/detail_pb_reviews_loading_indicator"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/detail_iv_detail_movie_poster"
+            android:visibility="invisible" />
 
     </android.support.constraint.ConstraintLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="#c0c0c0"/>
+        android:background="#c0c0c0" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -141,7 +182,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="#c0c0c0"/>
+        android:background="#c0c0c0" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -150,25 +191,25 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/detail_rv_trailers"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/detail_tv_error_message_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
             android:layout_gravity="bottom"
             android:background="#F00"
-            android:textColor="#FFF"
+            android:padding="16dp"
             android:text=""
+            android:textColor="#FFF"
             android:textSize="18sp"
             android:visibility="invisible" />
 
         <ProgressBar
             android:id="@+id/detail_pb_trailers_loading_indicator"
-            android:layout_height="42dp"
             android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_gravity="center"
             android:visibility="invisible" />
 
